@@ -107,7 +107,7 @@ public class CliArgsParser {
         Option tableColumnFormatsOption = Option.builder("f")
         		.longOpt("table-column-formats") 
         		.required(false) 
-        		.desc("Formatos das colunas da tabela SQL (separadas por '-'). Lista de valores: ('%s': String, '%d':Inteiro, '%f':Decimal). Ex: -c %d-%s-%s-%s-%s")
+        		.desc("Formatos das colunas da tabela SQL (separadas por '-'). Lista de valores: ('s': String, 'd':Inteiro, 'f':Decimal). Ex: -c d-s-s-s-s")
         		.hasArg()
         		.build();
         Option commitIntervalOption = Option.builder("o")

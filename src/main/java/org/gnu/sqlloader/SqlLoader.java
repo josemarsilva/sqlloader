@@ -194,7 +194,7 @@ public class SqlLoader {
 					}
 					String strEnquoteString = new String("'");
 					if(i < aTableColumnFormats.length) {
-						if (aTableColumnFormats[i].contentEquals("%d") || aTableColumnFormats[i].contentEquals("%f")) {
+						if (aTableColumnFormats[i].contentEquals("d") || aTableColumnFormats[i].contentEquals("f")) {
 							strEnquoteString = new String("");
 						}
 					}
@@ -204,7 +204,7 @@ public class SqlLoader {
 			}
 		}
 		// Prepared Statement and ...
-		String strSql = new String(SQLSERVER_INSERT_INTO_SQLSERVERLOADTABLE.replaceAll("%tablename", cliArgsParser.getTableName()).replaceAll("%tablecolumns", strTableColumns).replaceAll("%tablevalues", strTableValues));
+		String strSql = new String(SQLSERVER_INSERT_INTO_SQLSERVERLOADTABLE.replaceAll("%tablename", cliArgsParser.getTableName()).replaceAll("%tablecolumns", strTableColumns).replace("%tablevalues", strTableValues));
 		PreparedStatement prepStmt = conn.prepareStatement(strSql);
 		
         // Execute prepared statement ...
