@@ -1,1 +1,0 @@
-java -jar sqlloader.jar -t csv -i input.csv -s 1 -n [dbo].[input_table] -u  jdbc:sqlserver://localhost:1433;user=user;password=password;databaseName=dbname -c col_1-col_2-col_3-col_4-col_5 -f %d-%s-%s-%s-%s -m replace

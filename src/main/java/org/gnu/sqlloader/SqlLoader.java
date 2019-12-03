@@ -12,7 +12,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 public class SqlLoader {
+
+	// Logger ...
+	final static Logger logger = Logger.getLogger(SqlLoader.class);
 
 	/*
 	 * Constants ...
@@ -39,6 +44,7 @@ public class SqlLoader {
 		super();
 		
 		// Setter cliArgsParser ...
+		logger.info("SqlLoader Constructor()");
 		this.cliArgsParser = cliArgsParser;
 		
 	}
@@ -50,12 +56,14 @@ public class SqlLoader {
 	public void executeSqlLoader() throws Exception {
 				
 		// Connect database
+		logger.info("doConnectSqlServer( " + cliArgsParser.getDatabaseUrl() + "," + SQLSERVER_JDBC_DRIVER );
 		Connection conn = doConnectSqlServer( cliArgsParser.getDatabaseUrl(), SQLSERVER_JDBC_DRIVER );
 
 		// Read, Split and Load input file ...
 		readSplitLoad(cliArgsParser, conn);
 		
 		// Disconnect database
+		logger.info("doDisconnectSqlServer()" );
 		doDisconnectSqlServer( conn );
 
 		
@@ -69,11 +77,13 @@ public class SqlLoader {
 		
 		// LoadMode = 'replace' ?
 		if (cliArgsParser.getLoadMode().contentEquals(LOAD_MODE_REPLACE)) {
+			logger.info("doTruncateTable(): " + cliArgsParser.getTableName() );
 			doTruncateTable(conn, cliArgsParser.getTableName());
 		}
 		
 		String line = new String("");
 		long nrows = (long) 0;
+		logger.info("InputStreamReader(" + cliArgsParser.getInputFileName() + ")" );
 	    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(cliArgsParser.getInputFileName()), "UTF-8"));
 		System.out.println("Loading '%s' ...".replaceFirst("%s", cliArgsParser.getInputFileName()));
 		
@@ -82,7 +92,9 @@ public class SqlLoader {
 			// Skip Headers rows?
 			if (nrows > cliArgsParser.getSkipHeaderRows()) {
 				// eachRowSplitInsertIntoDatabase ...
-				eachRowSplitInsertIntoDatabase(line, conn, cliArgsParser);
+				eachRowSplitInsertIntoDatabase(nrows, line, conn, cliArgsParser);
+			} else {
+				logger.info("row: skipping" );
 			}
 			// Show progress nrow ?
 			if ( (nrows < 10) ||
@@ -96,14 +108,17 @@ public class SqlLoader {
 			}
 			// Commit interval ?
 			if (cliArgsParser.getCommitInterval() == 0) {
+				logger.info("conn.commit()");
 				conn.commit();
 			} else if (nrows % cliArgsParser.getCommitInterval() == 0 ) {
+				logger.info("conn.commit()");
 				conn.commit();
 			}
 		}
 		br.close();
 		System.out.println("");
 		System.out.println("Loading - row: %s".replaceFirst("%s", String.valueOf(nrows)));
+		System.out.println("Loading finished successfully!");
 	}	
 	
 	
@@ -179,7 +194,7 @@ public class SqlLoader {
 	/*
 	 * eachRowSplitCsvInsertIntoDatabase()
 	 */
-	public void eachRowSplitInsertIntoDatabase(String line, Connection conn, CliArgsParser cliArgsParser) throws SQLException {
+	public void eachRowSplitInsertIntoDatabase(long nrows, String line, Connection conn, CliArgsParser cliArgsParser) throws SQLException {
 		String strTableColumns = new String("");
 		String strTableValues = new String("");
 		String[] aTableColumnsArgs = cliArgsParser.getTableColumns().split("-");
@@ -199,15 +214,21 @@ public class SqlLoader {
 						}
 					}
 					strTableColumns = new String(strTableColumns.concat(aTableColumnsArgs[i]));
-					strTableValues = new String(strTableValues.concat(strEnquoteString).concat(aTableValuesLine[i]).concat(strEnquoteString));
+					// NULL value not enquoted?
+					if (strEnquoteString.contentEquals("") && aTableValuesLine[i].contentEquals("") ) {
+						strTableValues = new String(strTableValues.concat("NULL"));
+					} else {
+						strTableValues = new String(strTableValues.concat(strEnquoteString).concat(aTableValuesLine[i]).concat(strEnquoteString));
+					}
 				}
 			}
 		}
 		// Prepared Statement and ...
-		String strSql = new String(SQLSERVER_INSERT_INTO_SQLSERVERLOADTABLE.replaceAll("%tablename", cliArgsParser.getTableName()).replaceAll("%tablecolumns", strTableColumns).replace("%tablevalues", strTableValues));
+		String strSql = new String(SQLSERVER_INSERT_INTO_SQLSERVERLOADTABLE.replace("%tablename", cliArgsParser.getTableName()).replace("%tablecolumns", strTableColumns).replace("%tablevalues", strTableValues));
 		PreparedStatement prepStmt = conn.prepareStatement(strSql);
 		
         // Execute prepared statement ...
+		logger.info("row " + nrows + ": " + strSql);
         prepStmt.execute();
         
         // Close ...

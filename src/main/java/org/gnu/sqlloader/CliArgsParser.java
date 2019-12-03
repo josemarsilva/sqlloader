@@ -9,6 +9,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.Logger;
 
 
 /*
@@ -22,9 +23,13 @@ import org.apache.commons.cli.ParseException;
 
 public class CliArgsParser {
 
+	// Logger ...
+	final static Logger logger = Logger.getLogger(CliArgsParser.class);
+
+
 	// Constants ...
 	public final static String APP_NAME = new String("sqlloader");
-	public final static String APP_VERSION = new String("v.2019.11.28");
+	public final static String APP_VERSION = new String("v.2019.12.02");
 	public final static String APP_USAGE = new String(APP_NAME + " [<args-options-list>] - "+ APP_VERSION);
 
 	// Constants defaults ...
@@ -52,7 +57,9 @@ public class CliArgsParser {
      */
 	public CliArgsParser( String[] args ) {
 
+
 		// Options creating ...
+		logger.info("Command line Options");
 		Options options = new Options();
 		
 		
@@ -159,6 +166,19 @@ public class CliArgsParser {
 	        	this.setTableColumnFormats( cmdLine.getOptionValue("table-column-formats", "") );
 	        	this.setCommitInterval( cmdLine.getOptionValue("commit-interval", "") );
 	        	this.setLoadMode( cmdLine.getOptionValue("load-mode", "") );
+	        	
+	        	// Logger
+	        	logger.info("input-file-type: " + this.getInputFileType());
+	        	logger.info("input-file-name: " + this.getInputFileName());
+	        	logger.info("skip-header-rows: " + this.getSkipHeaderRows());
+	        	logger.info("database-type: " + this.getDatabaseType());
+	        	logger.info("database-url: " + this.getDatabaseUrl());
+	        	logger.info("table-name: " + this.getTableName());
+	        	logger.info("table-columns: " + this.getTableColumns());
+	        	logger.info("table-column-formats: " + this.getTableColumnFormats());
+	        	logger.info("commit-interval: " + this.getCommitInterval());
+	        	logger.info("load-mode: " + this.getLoadMode());
+
 	        	
 	        	// Check arguments Options ...
 	        	try {

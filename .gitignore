@@ -27,3 +27,8 @@ hs_err_pid*
 .classpath
 .project
 .settings/*
+
+# User Custom - Not Git
+*.log
+*.log.*
+/not-git-me/
