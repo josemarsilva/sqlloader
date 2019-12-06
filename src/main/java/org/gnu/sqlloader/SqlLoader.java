@@ -59,8 +59,9 @@ public class SqlLoader {
 		logger.info("doConnectSqlServer( " + cliArgsParser.getDatabaseUrl() + "," + SQLSERVER_JDBC_DRIVER );
 		Connection conn = doConnectSqlServer( cliArgsParser.getDatabaseUrl(), SQLSERVER_JDBC_DRIVER );
 
-		// Read, Split and Load input file ...
+		// Read, Split, Load Input File and Commit ...
 		readSplitLoad(cliArgsParser, conn);
+		conn.commit();
 		
 		// Disconnect database
 		logger.info("doDisconnectSqlServer()" );
@@ -218,7 +219,7 @@ public class SqlLoader {
 					if (strEnquoteString.contentEquals("") && aTableValuesLine[i].contentEquals("") ) {
 						strTableValues = new String(strTableValues.concat("NULL"));
 					} else {
-						strTableValues = new String(strTableValues.concat(strEnquoteString).concat(aTableValuesLine[i]).concat(strEnquoteString));
+						strTableValues = new String(strTableValues.concat(strEnquoteString).concat(aTableValuesLine[i].replaceAll("'", "''")).concat(strEnquoteString));
 					}
 				}
 			}
