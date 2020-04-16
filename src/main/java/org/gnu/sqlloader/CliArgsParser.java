@@ -29,8 +29,9 @@ public class CliArgsParser {
 
 	// Constants ...
 	public final static String APP_NAME = new String("sqlloader");
-	public final static String APP_VERSION = new String("v.2019.12.06");
+	public final static String APP_VERSION = new String("v.2020.04.16");
 	public final static String APP_USAGE = new String(APP_NAME + " [<args-options-list>] - "+ APP_VERSION);
+	public final static int ERROR_LEVEL_SQLLOADER = 1;
 
 	// Constants defaults ...
 
@@ -185,7 +186,7 @@ public class CliArgsParser {
 	        		checkArgumentOptions();
 	        	} catch (Exception e) {
 	    			System.err.println(e.getMessage());
-	    			System.exit(-1);
+	    			System.exit(ERROR_LEVEL_SQLLOADER);
 	        	}
 	        	
 	        	System.out.println(APP_NAME + " - "+ APP_VERSION);
@@ -196,7 +197,7 @@ public class CliArgsParser {
 			System.err.println(e.getMessage());
             HelpFormatter formatter = new HelpFormatter(); 
             formatter.printHelp(APP_USAGE, options); 
-			System.exit(-1);
+			System.exit(ERROR_LEVEL_SQLLOADER);
 		} 
         
 	}
