@@ -93,7 +93,14 @@ public class SqlLoader {
 			// Skip Headers rows?
 			if (nrows > cliArgsParser.getSkipHeaderRows()) {
 				// eachRowSplitInsertIntoDatabase ...
-				eachRowSplitInsertIntoDatabase(nrows, line, conn, cliArgsParser);
+				try {
+					eachRowSplitInsertIntoDatabase(nrows, line, conn, cliArgsParser);
+				} catch (Exception e) {
+					System.out.println("");
+					System.out.println("Loading EXCEPTION ERROR on row: %s - Original line is:".replaceFirst("%s", String.valueOf(nrows)));
+					System.out.println(line);
+					e.printStackTrace();
+				}
 			} else {
 				logger.info("row: skipping" );
 			}

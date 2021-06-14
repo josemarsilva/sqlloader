@@ -29,7 +29,7 @@ public class CliArgsParser {
 
 	// Constants ...
 	public final static String APP_NAME = new String("sqlloader");
-	public final static String APP_VERSION = new String("v.2020.04.16");
+	public final static String APP_VERSION = new String("v.2020.10.13.1557");
 	public final static String APP_USAGE = new String(APP_NAME + " [<args-options-list>] - "+ APP_VERSION);
 	public final static int ERROR_LEVEL_SQLLOADER = 1;
 
